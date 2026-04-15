@@ -1,0 +1,233 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace TP1
+{
+public class Superheroe
+{
+    private string nombre;
+    private string descripcion;
+    private bool capa;
+
+    public Superheroe(string nombre)
+    {
+        this.nombre = nombre;
+        this.descripcion = "";
+        this.capa = False;
+    }
+
+    public string GetNombre() { return nombre; }
+    public void SetNombre(string nombre) { this.nombre = nombre; }
+
+    public string GetDescripcion() { return descripcion; }
+    public void SetDescripcion(string descripcion) { this.descripcion = descripcion; }
+
+    public bool GetCapa() { return capa; }
+    public void SetCapa(bool capa) { this.capa = capa; }
+
+    public override string ToString()
+    {
+        return $"Nombre: {nombre}, Descripcion: {descripcion}, Capa: {capa}";
+    }
+}
+
+public class Dimension
+{
+    private double alto;
+    private double ancho;
+    private double profundidad;
+
+    public Dimension()
+    {
+        alto = 0;
+        ancho = 0;
+        profundidad = 0;
+    }
+
+    public Dimension(double alto, double ancho, double profundidad)
+    {
+        this.alto = alto;
+        this.ancho = ancho;
+        this.profundidad = profundidad;
+    }
+
+    public double GetAlto() { return alto; }
+    public void SetAlto(double alto) { this.alto = alto; }
+
+    public double GetAncho() { return ancho; }
+    public void SetAncho(double ancho) { this.ancho = ancho; }
+
+    public double GetProfundidad() { return profundidad; }
+    public void SetProfundidad(double profundidad) { this.profundidad = profundidad; }
+
+    public double GetVolumen()
+    {
+        return alto * ancho * profundidad;
+    }
+
+    public override string ToString()
+    {
+        return $"Alto: {alto}, Ancho: {ancho}, Profundidad: {profundidad}, Volumen: {GetVolumen()}";
+    }
+}
+
+public class Figura
+{
+    private string codigo;
+    private double precio;
+    private Superheroe superheroe;
+    private Dimension dimensiones;
+
+    public Figura(string codigo, double precio, Dimension dimensiones, Superheroe superheroe)
+    {
+        this.codigo = codigo;
+        this.precio = precio;
+        this.dimensiones = dimensiones;
+        this.superheroe = superheroe;
+    }
+
+    public string GetCodigo() { return codigo; }
+    public void SetCodigo(string codigo) { this.codigo = codigo; }
+
+    public double GetPrecio() { return precio; }
+    public void SetPrecio(double precio) { this.precio = precio; }
+
+    public Superheroe GetSuperheroe() { return superheroe; }
+    public void SetSuperheroe(Superheroe superheroe) { this.superheroe = superheroe; }
+
+    public Dimension GetDimensiones() { return dimensiones; }
+    public void SetDimensiones(Dimension dimensiones) { this.dimensiones = dimensiones; }
+
+    public void SubirPrecio(double cantidad)
+    {
+        precio += cantidad;
+    }
+
+    public override string ToString()
+    {
+        return $"Codigo: {codigo}, Precio: {precio}\n{superheroe}\n{dimensiones}";
+    }
+}
+
+public class Coleccion
+{
+    private string nombreColeccion;
+    private List<Figura> listaFiguras;
+
+    public Coleccion(string nombre)
+    {
+        nombreColeccion = nombre;
+        listaFiguras = new List<Figura>();
+    }
+
+    public string GetNombreColeccion() { return nombreColeccion; }
+    public void SetNombreColeccion(string nombre) { nombreColeccion = nombre; }
+
+    public void AnadirFigura(Figura fig)
+    {
+        listaFiguras.Add(fig);
+    }
+
+    public void SubirPrecio(double cantidad, string id)
+    {
+        foreach (Figura fig in listaFiguras)
+        {
+            if (fig.GetCodigo().Equals(id))
+            {
+                fig.SubirPrecio(cantidad);
+                break;
+            }
+        }
+    }
+
+    public override string ToString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("Colección: " + nombreColeccion);
+
+        foreach (Figura fig in listaFiguras)
+        {
+            sb.AppendLine(fig.ToString());
+            sb.AppendLine("----------------");
+        }
+
+        return sb.ToString();
+    }
+
+    public string ConCapa()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        foreach (Figura fig in listaFiguras)
+        {
+            if (fig.GetSuperheroe().GetCapa())
+            {
+                sb.AppendLine(fig.ToString());
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public Figura MasValioso()
+    {
+        if (listaFiguras.Count == 0) return null;
+
+        Figura max = listaFiguras[0];
+
+        foreach (Figura fig in listaFiguras)
+        {
+            if (fig.GetPrecio() > max.GetPrecio())
+            {
+                max = fig;
+            }
+        }
+
+        return max;
+    }
+
+    public double GetValorColeccion()
+    {
+        double total = 0;
+
+        foreach (Figura fig in listaFiguras)
+        {
+            total += fig.GetPrecio();
+        }
+
+        return total;
+    }
+
+    public double GetVolumenColeccion()
+    {
+        double total = 0;
+
+        foreach (Figura fig in listaFiguras)
+        {
+            total += fig.GetDimensiones().GetVolumen();
+        }
+
+        return total + 200;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Superheroe spiderman = new Superheroe("Spiderman");
+        spiderman.SetDescripcion("Traje rojo y azul");
+        spiderman.SetCapa(false);
+
+        Dimension dim = new Dimension(10, 5, 2);
+
+        Figura figura = new Figura("F001", 150, dim, spiderman);
+
+        Coleccion coleccion = new Coleccion("Marvel");
+        coleccion.AnadirFigura(figura);
+
+        System.Console.WriteLine(coleccion.ToString());
+    }
+}
+}
